@@ -22,4 +22,9 @@ i want this program to calculate those dates and create a taskwarrior task that'
 optional flags:
 
 --dry-run: doesn't make a task, just prints out info about the task it would have made
---recentest-shot-date 11/27/18: specifies the date of the most recent allergy shot session. if unspecified, defaults to today
+--most-recent-shot-date 11/27/18: specifies the date of the most recent allergy shot session. if unspecified, defaults to today
+
+
+TODO: how does the program find preexisting allergy shot tasks? is it possible to tag a task?
+
+https://github.com/ralphbean/taskw seems to be the way to go for controlling taskwarrior from python

@@ -60,13 +60,20 @@ def main():
     if days_to_subtract > 0:
         latest_possible = latest_possible - datetime.timedelta(days=days_to_subtract)
 
+    # I want the task to be hidden until a couple of days before earliest_possible.
+    wait_until = earliest_possible - datetime.timedelta(days=2)
+
+    task_description = 'get allergy shots, earliest day is {weekday} {date}'.format(
+        weekday=weekday_to_string(earliest_possible.weekday()),
+        date=earliest_possible.strftime('%m/%d'),
+    )
+
     if args.dry_run:
         print(
-            'task add +ALLERGY pri:H wait:{wait} due:{due} get allergy shots, earliest day is {weekday} {date}'.format(
-                wait=format_date(earliest_possible - datetime.timedelta(days=2)),
+            'task add +ALLERGY pri:H wait:{wait} due:{due} {description}'.format(
+                wait=format_date(wait_until),
                 due=format_date(latest_possible),
-                weekday=weekday_to_string(earliest_possible.weekday()),
-                date=earliest_possible.strftime('%m/%d')
+                description=task_description,
             )
         )
     else:

@@ -4,10 +4,8 @@ when I need to go downtown for allergy shots.
 import argparse
 import datetime
 
-# TODO give allergy tag high urgency
+import taskw
 
-
-# let's start by writing code to figure out the relevant days, and later on we can figure out taskwarrior stuff
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate a taskwarrior task that tells me when to get allergy shots.')
@@ -77,8 +75,13 @@ def main():
             )
         )
     else:
-        # TODO
-        assert False
+        w = taskw.TaskWarrior()
+
+        preexisting_tasks = w.filter_tasks({'status': 'pending', 'tags': 'ALLERGY'}) + w.filter_tasks({'status': 'waiting', 'tags': 'ALLERGY'})
+        assert len(preexisting_tasks) in [0, 1]
+
+        if not preexisting_tasks:
+            w.task_add(task_description, tags=['ALLERGY'], wait=format_date(wait_until), due=format_date(latest_possible))
 
 
 

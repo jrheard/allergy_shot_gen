@@ -25,6 +25,11 @@ optional flags:
 --most-recent-shot-date 11/27/18: specifies the date of the most recent allergy shot session. if unspecified, defaults to today
 
 
-TODO: how does the program find preexisting allergy shot tasks? is it possible to tag a task?
+DONE: how does the program find preexisting allergy shot tasks? is it possible to tag a task?
 
 https://github.com/ralphbean/taskw seems to be the way to go for controlling taskwarrior from python
+
+
+
+ok, i did it!
+i'm punting on the most-recent-shot-date feature for now, i can add that later if i feel like it

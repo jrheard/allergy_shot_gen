@@ -1,0 +1,25 @@
+11/27/18
+
+rough sketch so far:
+
+when run like `python allergy_shot_gen.py`:
+
+* checks to see if there's an allergy shot task
+* if there _isn't_ one, calculates the earliest and latest dates on which i can get my next shot
+
+the rules are that i have to wait at least 7 days between shots:
+so if i get a shot on a tuesday, i can't get a shot on the following monday, but i _can_ get a shot the following tuesday
+
+call that day "earliest_possible"
+
+and i can wait at most 13 days between shots:
+so if i get a shot on a tuesday, the last day on which i can get a followup shot is the monday after the following monday
+
+call that day "latest_possible"
+
+i want this program to calculate those dates and create a taskwarrior task that's due on latest_possible, and is hidden until two days before earliest_possible
+
+optional flags:
+
+--dry-run: doesn't make a task, just prints out info about the task it would have made
+--recentest-shot-date 11/27/18: specifies the date of the most recent allergy shot session. if unspecified, defaults to today

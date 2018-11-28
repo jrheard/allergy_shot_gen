@@ -56,7 +56,14 @@ def main():
     # subtract 1 day to clamp it to that same friday.
     days_to_subtract = latest_possible.weekday() - 4
     if days_to_subtract > 0:
-        latest_possible = latest_possible - datetime.timedelta(days=days_to_subtract)
+        latest_possible -= datetime.timedelta(days=days_to_subtract)
+
+    # In taskwarrior, if you mark a task as due on a Tuesday, that means that it's due
+    # at midnight Tuesday morning, and during the day on Tuesday the task will display
+    # as due in eg -12h. I don't want that behavior to happen until I'm _overdue_,
+    # so we'll add a day to latest_possible in order to get this due-display behavior
+    # working the way I want.
+    latest_possible += datetime.timedelta(days=1)
 
     # I want the task to be hidden until a couple of days before earliest_possible.
     wait_until = earliest_possible - datetime.timedelta(days=2)

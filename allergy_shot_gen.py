@@ -10,6 +10,7 @@ import taskw
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate a taskwarrior task that tells me when to get allergy shots.')
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--most-recent-shot-date')
     return parser.parse_args()
 
 
@@ -35,8 +36,10 @@ def format_date(a_datetime):
 def main():
     args = parse_args()
 
-    # TODO implement most_recent_shot_date arg
-    today = datetime.datetime.today()
+    if args.most_recent_shot_date:
+        today = datetime.datetime.strptime(args.most_recent_shot_date, '%m/%d/%Y')
+    else:
+        today = datetime.datetime.today()
 
     # The allergy clinic is only open on weekdays,
     # so `earliest_possible` will always be a weekday.
@@ -63,21 +66,23 @@ def main():
     # as due in eg -12h. I don't want that behavior to happen until I'm _overdue_,
     # so we'll add a day to latest_possible in order to get this due-display behavior
     # working the way I want.
-    latest_possible += datetime.timedelta(days=1)
+    due = latest_possible + datetime.timedelta(days=1)
 
     # I want the task to be hidden until a couple of days before earliest_possible.
     wait_until = earliest_possible - datetime.timedelta(days=2)
 
-    task_description = 'get allergy shots, earliest day is {weekday} {date}'.format(
-        weekday=weekday_to_string(earliest_possible.weekday()),
-        date=earliest_possible.strftime('%m/%d'),
+    task_description = 'get allergy shots between {earliest_weekday} {earliest_date} and {latest_weekday} {latest_date}'.format(
+        earliest_weekday=weekday_to_string(earliest_possible.weekday()),
+        earliest_date=earliest_possible.strftime('%m/%d'),
+        latest_weekday=weekday_to_string(latest_possible.weekday()),
+        latest_date=latest_possible.strftime('%m/%d'),
     )
 
     if args.dry_run:
         print(
             'task add +ALLERGY pri:H wait:{wait} due:{due} {description}'.format(
                 wait=format_date(wait_until),
-                due=format_date(latest_possible),
+                due=format_date(due),
                 description=task_description,
             )
         )
@@ -88,7 +93,7 @@ def main():
         assert len(preexisting_tasks) in [0, 1]
 
         if not preexisting_tasks:
-            w.task_add(task_description, tags=['ALLERGY'], wait=format_date(wait_until), due=format_date(latest_possible))
+            w.task_add(task_description, tags=['ALLERGY'], wait=format_date(wait_until), due=format_date(due))
 
 
 

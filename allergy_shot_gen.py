@@ -3,6 +3,7 @@ when I need to go downtown for allergy shots.
 """
 import argparse
 import datetime
+import os
 
 import taskw
 
@@ -78,14 +79,14 @@ def main():
         latest_date=latest_possible.strftime('%m/%d'),
     )
 
+    task_command = 'task add +ALLERGY pri:H wait:{wait} due:{due} {description} && task sync'.format(
+        wait=format_date(wait_until),
+        due=format_date(due),
+        description=task_description,
+    )
+
     if args.dry_run:
-        print(
-            'task add +ALLERGY pri:H wait:{wait} due:{due} {description}'.format(
-                wait=format_date(wait_until),
-                due=format_date(due),
-                description=task_description,
-            )
-        )
+        print(task_command)
     else:
         w = taskw.TaskWarrior()
 
@@ -93,7 +94,7 @@ def main():
         assert len(preexisting_tasks) in [0, 1]
 
         if not preexisting_tasks:
-            w.task_add(task_description, tags=['ALLERGY'], wait=format_date(wait_until), due=format_date(due))
+            os.system(task_command)
 
 
 
